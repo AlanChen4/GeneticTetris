@@ -18,9 +18,10 @@ class tetris_AI:
 
     def start_helper(self):
         '''Starts python helper script'''
+
         while True:
             helper.convert_image()
-
+            helper.update_board(debug=True)
 
 
     def start_all(self):

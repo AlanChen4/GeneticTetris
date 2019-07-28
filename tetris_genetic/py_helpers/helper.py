@@ -1,5 +1,6 @@
 import cv2
 import json
+import time
 
 
 def convert_image():
@@ -13,6 +14,32 @@ def convert_image():
     except TypeError:
         # TypeError is raised when status.png has not been created
         pass
+
+
+def update_board(debug):
+    if debug:
+        # delay for debugging purposes
+        time.sleep(1)
+
+    # converts the image into an array
+    board = []
+    converted_image = cv2.imread('game_state/converted_image.png')
+    for row_index, row in enumerate(converted_image):
+        for spot_index, spot in enumerate(row):
+            if spot_index % 10 == 0:
+                board.append([])
+                if spot[0] != 0:
+                    board[row_index].append('#')
+            elif spot[0] != 0:
+                board[row_index].append('#')
+            else:
+                board[row_index].append('.')
+    
+    if debug:
+        # clears command prompt and prints array in tetris format
+        print("\n"*50)
+        for row in board:
+            print(row)
 
 
 def get_height():
