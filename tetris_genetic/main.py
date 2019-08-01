@@ -20,13 +20,12 @@ class tetris_AI:
         '''Starts python helper script'''
         h = Heuristics()
         while True:
-            h.convert_image()
-            h.update_board(debug=True)
-            h.update_info()
+            h.update_board(debug=False)
+            h.update_info(spacing=False)
             
 
     def start_all(self):
-        # self.jobs.append(threading.Thread(target=self.start_script))
+        self.jobs.append(threading.Thread(target=self.start_script))
         self.jobs.append(threading.Thread(target=self.start_helper))
 
         for job in self.jobs:

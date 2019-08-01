@@ -1,12 +1,18 @@
 require 'tetris_controls'
--- require 'tetris_copy'
-require 'tetris_genetic'
 
 -- weights used
 height_weight = 0
 lines_weight = 0
 holes_weight = 0
 bump_weight = 0
+
+
+-- heuristic information
+TOTAL_HEIGHT = 0
+LINES_CLEARED = 0
+TOTAL_HOLES = 0
+TOTAL_BUMPS = 0
+
 
 -- weights multiplied by conditional variables
 THe = height_weight * TOTAL_HEIGHT
@@ -38,6 +44,7 @@ function get_fitness()
   return get_score()
 end
 
+
 function new_population()
   local population = {}
   for i = 1, 16 do
@@ -60,7 +67,7 @@ function main()
   press_start()
   tetris_sleep()
   while true do
-    get_screen()
+    update_info()
     emu.frameadvance()
   end
 end

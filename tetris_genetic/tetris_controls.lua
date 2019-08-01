@@ -1,7 +1,6 @@
---[[
-This file contains the helper methods needed to play tetris
-]]--
+-- This file contains the helper methods needed to play tetris
 
+local json = require 'json'
 
 -- resets buttons
 function reset_buttons()
@@ -55,7 +54,6 @@ function press_start()
   reset_buttons()
 end
 
-
 -- rotate piece
 function rotate()
   local buttons = joypad.get(1)
@@ -65,7 +63,6 @@ function rotate()
   reset_buttons()
 end
 
-
 -- simulates sleep by skipping five frames
 function tetris_sleep()
   emu.frameadvance()
@@ -74,3 +71,33 @@ function tetris_sleep()
   emu.frameadvance()
   emu.frameadvance()
 end
+
+-- used to read json file
+local function load_table(filename)
+    local path = system.pathForFile( filename, system.DocumentsDirectory)
+    local contents = ""
+    local myTable = {}
+    local file = io.open( path, "r" )
+    if file then
+        local contents = file:read( "*a" )
+        myTable = json.decode(contents);
+        io.close( file )
+        return myTable
+    end
+    print(filename, "file not found")
+    return nil
+end
+
+-- updates all information for the python counterparts
+function update_info()
+  gui.savescreenshotas('game_state/status.png')
+
+  local status_number = memory.readbyte(0x0048)
+  local output_file = io.open('game_state/fceux_status.txt', 'w')
+  
+  io.output(output_file)
+  io.write(status_number)
+  io.close(output_file)
+end
+
+
