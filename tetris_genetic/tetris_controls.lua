@@ -1,6 +1,5 @@
 -- This file contains the helper methods needed to play tetris
 
-local json = require 'json'
 
 -- resets buttons
 function reset_buttons()
@@ -72,21 +71,6 @@ function tetris_sleep()
   emu.frameadvance()
 end
 
--- used to read json file
-local function load_table(filename)
-    local path = system.pathForFile( filename, system.DocumentsDirectory)
-    local contents = ""
-    local myTable = {}
-    local file = io.open( path, "r" )
-    if file then
-        local contents = file:read( "*a" )
-        myTable = json.decode(contents);
-        io.close( file )
-        return myTable
-    end
-    print(filename, "file not found")
-    return nil
-end
 
 -- updates all information for the python counterparts
 function update_info()
