@@ -1,28 +1,37 @@
 require 'tetris_controls'
 
--- weights used
-height_weight = 0
-lines_weight = 0
-holes_weight = 0
-bump_weight = 0
+local json = require 'json'
 
+function get_decision(height_w, lines_w, holes_w, bump_w)
+  -- access json file and convert to table
+  local file = io.open('game_state/game_status.json', 'r')
+  local contents = file:read('*a')
+  local game_status = json.decode(contents)
+  io.close(file)
 
--- heuristic information
-TOTAL_HEIGHT = 0
-LINES_CLEARED = 0
-TOTAL_HOLES = 0
-TOTAL_BUMPS = 0
+  -- weights used
+  height_weight = height_w
+  lines_weight = lines_w
+  holes_weight = holes_w
+  bump_weight = bump_w
 
+  -- heuristic information
+  TOTAL_HEIGHT = game_status['height']
+  LINES_CLEARED = game_status['lines_cleared']
+  TOTAL_HOLES = game_status['holes']
+  TOTAL_BUMPS = game_status['bumps']
 
--- weights multiplied by conditional variables
-THe = height_weight * TOTAL_HEIGHT
-LCl = lines_weight * LINES_CLEARED
-THo = holes_weight * TOTAL_HOLES
-TBu = bump_weight * TOTAL_BUMPS
+  -- weights multiplied by conditional variables
+  THe = height_weight * TOTAL_HEIGHT
+  LCl = lines_weight * LINES_CLEARED
+  THo = holes_weight * TOTAL_HOLES
+  TBu = bump_weight * TOTAL_BUMPS
 
--- score function
-SCORE = THe + LCl + THo + TBu
+  -- decision function
+  SCORE = THe + LCl + THo + TBu
+end
 
+-- creates environment
 function init_env()
   env = init_board()
 end
@@ -41,6 +50,7 @@ end
 
 -- uses tetris score as fitness function
 function get_fitness()
+  -- get_score is not to be confused with the score used to make decisions
   return get_score()
 end
 
@@ -68,6 +78,7 @@ function main()
   tetris_sleep()
   while true do
     update_info()
+    get_decision()
     emu.frameadvance()
   end
 end
