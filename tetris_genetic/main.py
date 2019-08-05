@@ -22,6 +22,7 @@ class tetris_AI:
         while True:
             h.update_board(debug=False)
             h.update_info(spacing=False)
+            h.place_piece()
             
 
     def start_all(self):

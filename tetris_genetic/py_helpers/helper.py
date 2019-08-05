@@ -2,6 +2,8 @@ import cv2
 import json
 import time
 
+from py_helpers import pieces
+
 class Heuristics:
     ''' gathers the heuristics for the lua AI'''
 
@@ -152,3 +154,8 @@ class Heuristics:
             print("total holes: {}".format(holes))
             print("total bumps: {}".format(bumps))
             print("game status: {}".format(game_status))
+
+
+    # goes through all possible combinations of hard drops
+    def place_piece(self):
+        current_piece = pieces.get_piece()

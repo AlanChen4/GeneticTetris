@@ -76,12 +76,23 @@ end
 function update_info()
   gui.savescreenshotas('game_state/status.png')
 
+  -- current status of the game
   local status_number = memory.readbyte(0x0048)
-  local output_file = io.open('game_state/fceux_status.txt', 'w')
+  local status_file = io.open('game_state/fceux_status.txt', 'w')
   
-  io.output(output_file)
+  io.output(status_file)
   io.write(status_number)
-  io.close(output_file)
+  io.close(status_file)
+
+  -- current and next piece loaded
+  local current_piece = memory.readbyte(0x0042)
+  local next_piece = memory.readbyte(0x00BF)
+
+  local piece_file = io.open('py_helpers/game_state/current_next_piece.txt', 'w')
+
+  io.output(piece_file)
+  io.write(current_piece .. ' ' .. next_piece)
+  io.close(piece_file)
 end
 
 

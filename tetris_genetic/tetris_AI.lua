@@ -78,7 +78,7 @@ function main()
   tetris_sleep()
   while true do
     update_info()
-    get_decision()
+    -- get_decision()
     emu.frameadvance()
   end
 end
