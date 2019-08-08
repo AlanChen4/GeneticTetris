@@ -157,5 +157,56 @@ class Heuristics:
 
 
     # goes through all possible combinations of hard drops
-    def place_piece(self):
+    def get_move(self):
+        # fetch the current piece
         current_piece = pieces.get_piece()
+
+        # drop each piece and add to score list
+        scores = []
+        pass
+
+
+    def place_piece(self, piece, x):
+
+        piece = [
+        ['#', '#', '#'],
+        ['#', '.', '.']
+        ]
+        piece.reverse()
+
+        board = [
+        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '#', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['#', '#', '#', '.', '.', '.', '.', '.', '.', '.']
+        ]
+        
+        piece_length = len(piece[0])
+
+        for row_index, row in enumerate(board):
+            is_clear = True
+            for check_spot in range(piece_length):
+                if row[x+check_spot] == '#':
+                    is_clear = False
+            if is_clear: 
+                continue
+            else:
+                can_drop = True
+                # can NOT drop down one more
+                for drop_row in piece:
+                    for drop_spot in range(len(drop_row)):
+                        if board[row_index][x+drop_spot] == '#' and drop_row[drop_spot] == '#':
+                            can_drop = False
+                if not can_drop:
+                    # transfer piece to board
+                    for piece_row_index, piece_row in enumerate(piece):
+                        for piece_spot_index, piece_spot in enumerate(piece_row):
+                            if board[row_index-piece_row_index][x+piece_spot_index] == '.':
+                                board[row_index-piece_row_index][x+piece_spot_index] = piece_spot
+                    break
+
+        for row in board:
+            print(row)
+
