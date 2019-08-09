@@ -1,3 +1,5 @@
+import numpy as np
+
 i_piece = [['#', '#', '#', '#']]
 
 j_piece = [['#', '.', '.'],
@@ -19,17 +21,16 @@ o_piece = [['#', '#'],
            ['#', '#']]
 
 
-def rotate_piece(piece):
-    # rotated version
-    rotated = zip(*piece[::-1])
-    rotated = [list(spot) for spot in rotated]
-    return rotated
-    
+def rotate_piece(piece, rotation_count):
+    rotated_piece = np.array(piece)
+    rotated_piece = np.rot90(rotated_piece, rotation_count)
+    return rotated_piece
+
 
 def get_piece():
     current_piece_id = open('py_helpers/game_state/current_next_piece.txt')
     try:
-        current_piece_id = int(current_piece_id.read()[0])
+        current_piece_id = int(current_piece_id.read().split(' ')[1])
         if current_piece_id == 2:
             return t_piece
         if current_piece_id == 14:
@@ -44,5 +45,8 @@ def get_piece():
             return i_piece
         if current_piece_id == 11:
             return s_piece
+
     except IndexError:
+        pass
+    except ValueError:
         pass

@@ -21,9 +21,7 @@ class tetris_AI:
         h = Heuristics()
         while True:
             h.update_board(debug=False)
-            h.update_info(spacing=False)
-            h.place_piece()
-            
+
 
     def start_all(self):
         self.jobs.append(threading.Thread(target=self.start_script))
