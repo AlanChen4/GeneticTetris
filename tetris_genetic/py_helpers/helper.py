@@ -24,15 +24,11 @@ class Heuristics:
             pass
 
 
-    def update_board(self, debug):
+    def update_board(self, console):
         '''updates the status image and prints to console'''
         if self.get_game_status() == 2:
             
             self.convert_image()
-
-            # delay for debugging purposes
-            if debug:
-                time.sleep(0.5)
 
             # converts the image into an array
             self.board = []
@@ -48,14 +44,14 @@ class Heuristics:
                         self.board[row].append('.')
                     else:
                         self.board[row].append('#')
-            
-            self.get_decision()
 
-            # clears command prompt and prints array in tetris format
-            if debug:
+            # clears command prompt and prints array in readable format
+            if console:
                 print("\n"*30)
                 for row in self.board:
                     print(row)
+
+            return True
 
 
     def get_height(self, board):
@@ -150,79 +146,122 @@ class Heuristics:
         '''makes decision on the best move based on score function'''
 
         # fetch piece first
-        piece = pieces.get_piece()
-        if piece == None:
-            print('unable to fetch piece')
-            return
-        for row in piece:
-            print(row)
+        piece = pieces.get_piece(console = True)
+
+        h_board = self.place_piece(0, piece, 0)
+
+        for r in h_board:
+            print(r)
  
         # place piece will record score values to hypo_scores
-        self.hypo_scores = []
+        #self.hypo_scores = []
 
         # go through each piece spot and rotation and record score values
-        for x in range(10 - len(piece[0])):
-            for rotation in range(4):
-                self.place_piece(x, piece, rotation)
+        # for x in range(10 - len(piece[0])):
+        #     for rotation in range(4):
+        #         self.place_piece(x, piece, rotation)
 
         # get the highest score from hypo_scores
-        highest_score = -100000
-        highest_score_index = None
-        for score_index, score in enumerate(self.hypo_scores):
-            if score['score'] > highest_score:
-                highest_score = score['score']
-                highest_score_index = score_index
+        # highest_score = -100000
+        # highest_score_index = None
+        # for score_index, score in enumerate(self.hypo_scores):
+        #     if score['score'] > highest_score:
+        #         highest_score = score['score']
+        #         highest_score_index = score_index
 
-        print(self.hypo_scores[highest_score_index])
+        # board = self.hypo_scores[highest_score_index]['board']
 
 
     def place_piece(self, x, piece, rotate_times):
-        '''drops piece in hypothetical board and returns the hypo_board'''
+        '''drops piece in hypothetical board and returns the hypothetical board, hypo_board'''
 
-        # create copy of board
         hypo_board = deepcopy(self.board)
-
-        # rotate the piece the selected number of times
-        for i in range(rotate_times):
-            piece = pieces.rotate_piece(piece, i)
-
-        # drops piece into x_value location
+        piece = pieces.rotate_piece(piece, rotate_times)
         piece_length = len(piece[0])
+
         for row_index, row in enumerate(hypo_board):
-            is_clear = True
-            for check_spot in range(piece_length):
-                if row[x+check_spot] == '#':
-                    is_clear = False
-            if is_clear: 
+            if '#' not in row:
                 continue
             else:
-                can_drop = True
-                # can NOT drop down one more
-                for drop_row in piece:
-                    for drop_spot in range(len(drop_row)):
-                        if hypo_board[row_index][x+drop_spot] == '#' and drop_row[drop_spot] == '#':
-                            can_drop = False
-                if not can_drop:
-                    # transfer piece to hypo_board
-                    for piece_row_index, piece_row in enumerate(piece):
-                        for piece_spot_index, piece_spot in enumerate(piece_row):
-                            if hypo_board[row_index-piece_row_index][x+piece_spot_index] == '.':
-                                hypo_board[row_index-piece_row_index][x+piece_spot_index] = piece_spot
-                    break
-        
-        
-        # get weights generated from lua_file
-        height_w, line_w, hole_w, bump_w = open('py_helpers/game_state/lua_weights.txt').read().split(' ')
-        
-        # get values determined by move made
-        height_v = int(self.get_height(hypo_board))
-        line_v = int(self.get_lines_cleared(hypo_board))
-        hole_v = int(self.get_holes(hypo_board))
-        bump_v = int(self.get_bumps(hypo_board))
+                # reached bottom of rows without hitting anything
+                if (row_index + len(piece)) == 23:
+                    for p_row_index, p_row in enumerate(piece):
+                        for p_value_index, p_value in enumerate(p_row):
+                            hypo_board[row_index - p_row_index][x + p_value_index] = p_value
 
-        # place score value along with x_value and rotations
-        score = (float(height_w)*height_v) + (float(line_w)*line_v) + (float(hole_w)*hole_v) + (float(bump_w)*bump_v)
-        score_info = {'score': score , 'x_value': x, 'rotations': rotate_times, 'board': hypo_board}
-        self.hypo_scores.append(score_info)
+                # there is MOT a piece directly underneath
+
+                # there IS piece directly underneath
+
 
         return hypo_board
+
+        # # create copy of board
+        # hypo_board = deepcopy(self.board)
+
+        # # rotate the piece the selected number of times
+        # for i in range(rotate_times):
+        #     piece = pieces.rotate_piece(piece, i)
+
+        # # drops piece into x_value location
+        # piece_length = len(piece[0])
+        # for row_index, row in enumerate(hypo_board):
+
+        #     # check if row is clear
+        #     is_clear = True
+        #     for check_spot in range(piece_length):
+        #         if row[x+check_spot] == '#':
+        #             is_clear = False
+
+        #     # row is clear, no #'s and then check if reached bottom
+        #     if is_clear: 
+        #         if row_index == 22:
+        #             print('last row reached')
+        #             break
+        #         continue
+        #     else:
+
+        #         print('column: {} rotations: {}'.format(x, rotate_times))
+
+        #         can_drop = True
+        #         # can NOT drop down one more
+        #         for drop_row in piece:
+        #             for drop_spot in range(len(drop_row)):
+        #                 if hypo_board[row_index][x+drop_spot] == '#' and drop_row[drop_spot] == '#':
+        #                     can_drop = False
+        #         if not can_drop:
+        #             # transfer piece to hypo_board
+        #             for piece_row_index, piece_row in enumerate(piece):
+        #                 for piece_spot_index, piece_spot in enumerate(piece_row):
+        #                     if hypo_board[row_index-piece_row_index][x+piece_spot_index] == '.':
+        #                         hypo_board[row_index-piece_row_index][x+piece_spot_index] = piece_spot
+        #             break
+        
+        
+        # # get weights generated from lua_file
+        # height_w, line_w, hole_w, bump_w = open('py_helpers/game_state/lua_weights.txt').read().split(' ')
+        
+        # # get values determined by move made
+        # height_v = int(self.get_height(hypo_board))
+        # line_v = int(self.get_lines_cleared(hypo_board))
+        # hole_v = int(self.get_holes(hypo_board))
+        # bump_v = int(self.get_bumps(hypo_board))
+
+        # # place score value along with x_value and rotations
+        # score = (float(height_w)*height_v) + (float(line_w)*line_v) + (float(hole_w)*hole_v) + (float(bump_w)*bump_v)
+        # score_info = {'score': score , 'x_value': x, 'rotations': rotate_times, 'board': hypo_board}
+        # self.hypo_scores.append(score_info)
+
+
+    def start(self):
+        '''starts the scripts required to make decisions for the fceux front-end'''
+        while True:
+            updated_status = self.update_board(console = False)
+
+            # wait for status to update and then get next move
+            if updated_status:
+                self.get_decision()
+
+                # sleep value prevents get_decision from being called twice
+                time.sleep(0.5)
+

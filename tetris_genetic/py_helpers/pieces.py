@@ -27,24 +27,32 @@ def rotate_piece(piece, rotation_count):
     return rotated_piece
 
 
-def get_piece():
+def get_piece(console):
     current_piece_id = open('py_helpers/game_state/current_next_piece.txt')
     try:
         current_piece_id = int(current_piece_id.read().split(' ')[1])
         if current_piece_id == 2:
-            return t_piece
+            return_piece = t_piece
         if current_piece_id == 14:
-            return l_piece
+            return_piece = l_piece
         if current_piece_id == 8:
-            return z_piece
+            return_piece = z_piece
         if current_piece_id == 10:
-            return o_piece
+            return_piece = o_piece
         if current_piece_id == 7:
-            return j_piece
+            return_piece = j_piece
         if current_piece_id == 18:
-            return i_piece
+            return_piece = i_piece
         if current_piece_id == 11:
-            return s_piece
+            return_piece = s_piece
+
+        if console:
+            print('')
+            for row in return_piece:
+                print(row)
+            print('')
+
+        return return_piece
 
     except IndexError:
         pass

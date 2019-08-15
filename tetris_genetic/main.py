@@ -19,8 +19,7 @@ class tetris_AI:
     def start_helper(self):
         '''Starts python helper script'''
         h = Heuristics()
-        while True:
-            h.update_board(debug=False)
+        h.start()
 
 
     def start_all(self):
