@@ -185,9 +185,10 @@ class Heuristics:
             else:
                 # reached bottom of rows without hitting anything
                 if (row_index + len(piece)) == 23:
-                    for p_row_index, p_row in reversed(list(enumerate(piece))):
-                        for p_value_index, p_value in enumerate(p_row):
-                            hypo_board[row_index - p_row_index][x + p_value_index] = p_value
+                    for row_p_index, row_piece in enumerate(piece):
+                        for spot_index, spot_piece in enumerate(row_piece):
+                            row_value = (22-len(piece))+row_p_index
+                            hypo_board[row_value][x+spot_index] = spot_piece 
 
                 # the row contains pieces
                 else:
