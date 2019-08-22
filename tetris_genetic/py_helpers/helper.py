@@ -148,10 +148,10 @@ class Heuristics:
         # fetch piece first
         piece = pieces.get_piece(console = True)
 
-        h_board = self.place_piece(0, piece, 0)
+        h_board = self.place_piece(0, piece, 2)
 
-        for r in h_board:
-            print(r)
+        for index, r in enumerate(h_board):
+            print(index, r)
  
         # place piece will record score values to hypo_scores
         #self.hypo_scores = []
@@ -185,14 +185,28 @@ class Heuristics:
             else:
                 # reached bottom of rows without hitting anything
                 if (row_index + len(piece)) == 23:
-                    for p_row_index, p_row in enumerate(piece):
+                    for p_row_index, p_row in reversed(list(enumerate(piece))):
                         for p_value_index, p_value in enumerate(p_row):
                             hypo_board[row_index - p_row_index][x + p_value_index] = p_value
 
-                # there is MOT a piece directly underneath
+                # the row contains pieces
+                else:
+                    # determine is there are any pieces in conflict
+                    is_piece = False
+                    
+                    for spot_index in range(len(piece[-1])):
+                        if piece[-1][spot_index] == '#':
+                            if hypo_board[row_index][spot_index+1] == '#':
+                                is_piece = True
 
-                # there IS piece directly underneath
+                    # there IS piece directly underneath
+                    if is_piece:
+                        print('stop NOW on row: {}'.format(row_index))
+                        break
 
+                    # there is NOT a piece directly underneath
+                    else:
+                        print('row {} is clear'.format(row_index))
 
         return hypo_board
 
