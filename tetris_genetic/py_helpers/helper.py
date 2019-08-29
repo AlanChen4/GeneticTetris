@@ -146,27 +146,36 @@ class Heuristics:
         '''makes decision on the best move based on score function'''
 
         # fetch piece first
-        piece = pieces.get_piece(console = True)
+        piece = pieces.get_piece(console = False)
  
         # place piece will record score values to hypo_scores
         self.hypo_scores = []
 
-        # go through each piece spot and rotation and record score values
-        for x in range(10 - len(piece[0])):
-            for rotation in range(4):
-                self.place_piece(x, piece, rotation)
+        board = self.place_piece(1, piece, 0)
+        for row_index, r in enumerate(board):
+            print(row_index, r)
+        # # go through each piece spot and rotation and record score values
+        # for x in range(10 - len(piece[0])):
+        #     for rotation in range(4):
+        #         self.place_piece(x, piece, rotation)
 
-        # get the highest score from hypo_scores
-        highest_score = -100000
-        highest_score_index = None
-        for score_index, score in enumerate(self.hypo_scores):
-            if score['score'] > highest_score:
-                highest_score = score['score']
-                highest_score_index = score_index
+        # for score in self.hypo_scores:
+        #     print(score['score'])
+        #     board = score['board']
+        #     for row in board:
+        #         print(row)
 
-        best_board = self.hypo_scores[highest_score_index]['board']
-        for r in best_board:
-            print(r)
+        # # get the highest score from hypo_scores
+        # highest_score = -100000
+        # highest_score_index = None
+        # for score_index, score in enumerate(self.hypo_scores):
+        #     if score['score'] > highest_score:
+        #         highest_score = score['score']
+        #         highest_score_index = score_index
+
+        # best_board = self.hypo_scores[highest_score_index]['board']
+        # # for r in best_board:
+        # #     print(r)
 
 
     def place_piece(self, x, piece, rotate_times):
@@ -181,37 +190,42 @@ class Heuristics:
                 continue
             else:
                 # reached bottom of rows without hitting anything
-                if (row_index + len(piece)) == 23:
+                if row_index == 21:
+                    print('***bottom reached***')
                     for row_p_index, row_piece in enumerate(piece):
                         for spot_index, spot_piece in enumerate(row_piece):
                             row_value = (22-len(piece))+row_p_index
-                            hypo_board[row_value][x+spot_index] = spot_piece 
+                            if hypo_board[row_value][x+spot_index] == '.':
+                                hypo_board[row_value][x+spot_index] = spot_piece 
 
                 # the row contains pieces
                 else:
+                    print('this row contains pieces', row_index, row)
                     # determine is there are any pieces in conflict
                     is_piece = False
-                    for spot_index in range(len(piece[-1])):
-                        if piece[-1][spot_index] == '#':
-                            if hypo_board[row_index][spot_index+x] == '#':
-                                is_piece = True
+
+                    for piece_row_index, piece_row in enumerate(piece):
+                        for spot_index, spot_value in enumerate(piece_row):
+                            if spot_value == '#' and piece_row_index != (len(piece) - 1):
+                                if piece[piece_row_index + 1][spot_index] == '.':
+                                    if hypo_board[row_index + 1][spot_index + x] == '#':
+                                        is_piece = True
+                            if spot_value == '#' and piece_row_index == (len(piece) - 1):
+                                if hypo_board[row_index + 1][spot_index + x] == '#':
+                                    is_piece = True
 
                     # there IS piece directly underneath
                     if is_piece:
-                        for row_p_index, row_piece in enumerate(piece):
-                            for spot_index, spot_piece in enumerate(row_piece):
-                                row_value = (row_index-len(piece))+row_p_index
-                                hypo_board[row_value][x+spot_index] = spot_piece 
+                        print('***piece underneath***', row_index)
+                        for piece_row_index, piece_row in enumerate(piece):
+                            for spot_index, spot_value in enumerate(piece_row):
+                                if hypo_board[(row_index - len(piece)) + piece_row_index + 1][spot_index + x] == '.':
+                                    hypo_board[(row_index - len(piece)) + piece_row_index + 1][spot_index + x] = spot_value
                         break
 
                     # there is NOT a piece directly underneath
                     else:
-                        for row_p_index, row_piece in enumerate(piece):
-                            for spot_index, spot_piece in enumerate(row_piece):
-                                row_value = (row_index-len(piece))+row_p_index
-                                if hypo_board[row_value+1][x+spot_index] == '.':
-                                    hypo_board[row_value+1][x+spot_index] = spot_piece
-                        break 
+                        continue
         
         # get weights generated from lua_file
         height_w, line_w, hole_w, bump_w = open('py_helpers/game_state/lua_weights.txt').read().split(' ')
