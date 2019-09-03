@@ -128,31 +128,25 @@ class Heuristics:
         # place piece will record score values to hypo_scores
         self.hypo_scores = []
 
-        board = self.place_piece(1, piece, 0)
-        for row_index, r in enumerate(board):
-            print(row_index, r)
-        # # go through each piece spot and rotation and record score values
-        # for x in range(10 - len(piece[0])):
-        #     for rotation in range(4):
-        #         self.place_piece(x, piece, rotation)
+        # go through each piece spot and rotation and record score values
+        for x in range(10 - len(piece[0])):
+            for rotation in range(4):
+                self.place_piece(x, piece, rotation)
 
-        # for score in self.hypo_scores:
-        #     print(score['score'])
-        #     board = score['board']
-        #     for row in board:
-        #         print(row)
+        # get the highest score from hypo_scores
+        highest_score = -100000
+        highest_score_index = None
+        for score_index, score in enumerate(self.hypo_scores):
+            if score['score'] > highest_score:
+                highest_score = score['score']
+                highest_score_index = score_index
 
-        # # get the highest score from hypo_scores
-        # highest_score = -100000
-        # highest_score_index = None
-        # for score_index, score in enumerate(self.hypo_scores):
-        #     if score['score'] > highest_score:
-        #         highest_score = score['score']
-        #         highest_score_index = score_index
-
-        # best_board = self.hypo_scores[highest_score_index]['board']
-        # # for r in best_board:
-        # #     print(r)
+        best_board = self.hypo_scores[highest_score_index]['board']
+        print('score:', self.hypo_scores[highest_score_index]['score'])
+        print('x-value:', self.hypo_scores[highest_score_index]['x_value'])
+        print('rotations:', self.hypo_scores[highest_score_index]['rotations'])
+        for r in best_board:
+            print(r)
 
 
     def place_piece(self, x, piece, rotate_times):
