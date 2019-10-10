@@ -18,18 +18,17 @@ function new_chromosome()
 end
 
 
--- uses tetris score as fitness function
-function get_fitness()
-  -- get_score is not to be confused with the score used to make decisions
-  return get_score()
-end
-
-
 function new_population()
   local population = {}
   for i = 1, 16 do
     population[i] = new_chromosome()
   end
+end
+
+
+-- uses get_fitness as the evaluation for candidate solution
+function get_fitness()
+  return get_score()
 end
 
 
@@ -39,6 +38,16 @@ end
 
 
 function crossover()
+  -- body
+end
+
+
+function mutation()
+  -- body
+end
+
+
+function replacement()
   -- body
 end
 
@@ -54,30 +63,10 @@ function record_weights(height, line, hole, bump)
 end
 
 -- get decision based on weights
-function get_decision(height_w, lines_w, holes_w, bump_w)
+function get_decision()
+  -- local decision_file = io.open('py_helpers/game_state/AI_decision.txt', 'w')
 
-  -- weights used
-  height_weight = height_w
-  lines_weight = lines_w
-  holes_weight = holes_w
-  bump_weight = bump_w
 
-  record_weights(height_weight, lines_weight, holes_weight, bump_weight)
-
-  -- heuristic information
-  TOTAL_HEIGHT = game_status['height']
-  LINES_CLEARED = game_status['lines_cleared']
-  TOTAL_HOLES = game_status['holes']
-  TOTAL_BUMPS = game_status['bumps']
-
-  -- weights multiplied by conditional variables
-  THe = height_weight * TOTAL_HEIGHT
-  LCl = lines_weight * LINES_CLEARED
-  THo = holes_weight * TOTAL_HOLES
-  TBu = bump_weight * TOTAL_BUMPS
-
-  -- decision function
-  SCORE = THe + LCl + THo + TBu
 end
 
 
@@ -86,7 +75,7 @@ function main()
   tetris_sleep()
   while true do
     update_info()
-    -- get_decision()
+    get_decision()
     emu.frameadvance()
   end
 end
