@@ -52,19 +52,7 @@ function replacement()
 end
 
 
--- record weights to game_state/lua_weights.txt
-function record_weights(height, line, hole, bump)
-  local weights_file = io.open('py_helpers/game_state/lua_weights.txt', 'w')
-  local weight_info = height .. " " .. lines .. " " .. hole .. " "  .. bump
-
-  io.output(weights_file)
-  io.write(weight_info)
-  io.close(weights_file)
-end
-
--- get decision based on weights
 function get_decision()
-  -- local decision_file = io.open('py_helpers/game_state/AI_decision.txt', 'w')
 
 
 end

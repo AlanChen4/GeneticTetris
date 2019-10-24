@@ -13,6 +13,7 @@ class Heuristics:
 	def __init__(self):
 		while True:
 			if self.update_board():
+				print('--getting decision')
 				self.get_decision()
 
 
@@ -33,6 +34,7 @@ class Heuristics:
 					else:
 						self._board[row].append('#')
 			return True
+
 
 	def convert_image(self):
 	    '''converts fceux screenshot to a black and white grid'''

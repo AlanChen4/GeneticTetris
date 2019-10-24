@@ -1,3 +1,4 @@
+import os
 import subprocess
 import threading
 
@@ -11,8 +12,12 @@ class tetris_AI:
 
     def start_script(self):
         '''Starts fceux with the lua script'''
-        script_path = 'tetris_AI.lua'
+        script_path = os.path.join('tetris_AI.lua')
         save_path = 'save_states/level_0.fcs'
+        
+        start_cmd = 'fceux -lua ' + script_path + ' -loadstate ' + save_path + ' game_roms/Tetris.nes'
+        subprocess.run(start_cmd, shell = True)
+
 
     def start_helper(self):
         '''Starts python helper script'''
