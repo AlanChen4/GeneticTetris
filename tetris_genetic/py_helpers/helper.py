@@ -51,12 +51,16 @@ class Heuristics:
 
 
 	def get_board_data(self, board):
-		'''returns height, lines_cleared, holes, and bumpiness'''
-		aggregate_height = board_helper.get_height()
-		lines_cleared = board_helper.get_lines_cleared()
-		total_holes = board_helper.get_holes()
-		bumpiness = board_helper.get_bumps()
-		return aggregate_height, lines_cleared, total_holes, bumpiness
+		'''prints height, lines_cleared, holes, and bumpiness'''
+		aggregate_height = board_helper.get_height(board)
+		lines_cleared = board_helper.get_lines_cleared(board)
+		total_holes = board_helper.get_holes(board)
+		bumpiness = board_helper.get_bumps(board)
+		
+		print('aggregate_height: ', aggregate_height)
+		print('lines_cleared: ', lines_cleared)
+		print('total_holes: ', total_holes)
+		print('bumpiness: ', bumpiness)
 
 
 	def get_game_status(self):
@@ -88,12 +92,13 @@ class Heuristics:
 		        highest_score = score['score']
 		        highest_score_index = score_index
 
-		best_board = self._hypo_scores[highest_score_index]['board']
-		print('score:', self._hypo_scores[highest_score_index]['score'])
-		print('x-value:', self._hypo_scores[highest_score_index]['x_value'])
-		print('rotations:', self._hypo_scores[highest_score_index]['rotations'])
-		for r in best_board:
-		    print(r)
+		# best_board = self._hypo_scores[highest_score_index]['board']
+		# print('score:', self._hypo_scores[highest_score_index]['score'])
+		# print('x-value:', self._hypo_scores[highest_score_index]['x_value'])
+		# print('rotations:', self._hypo_scores[highest_score_index]['rotations'])
+		# for r in best_board:
+		#     print(r)
+		self.get_board_data(self._board)
 
 
 	def place_piece(self, x, piece, rotate_times):
