@@ -1,5 +1,8 @@
 import cv2
 import json
+import os
+import subprocess
+import threading
 import time
 
 from copy import deepcopy
@@ -7,60 +10,61 @@ from copy import deepcopy
 from py_helpers import pieces
 from py_helpers import board_helper
 
+GENERATION_COUNT = 0
+
 class Heuristics:
 	''' Gathers the information needed for the lua-based AI'''
 
+	# TODO: looks like pieces are never placed in the first or last spots
+
 	def __init__(self):
-		while True:
-			if self.update_board():
-				print('--getting decision')
-				self.get_decision()
+		# creates live version of fceux screen
+		self.live_board = []
+		for row in range(22):
+			for col in range(10):
+				if col % 10 == 0:
+					self.live_board.append(['.'])
+				else:
+					self.live_board[row].append('.')
+
+		# show basic data after starting fceux thread
+		threading.Thread(target=self.start_fceux).start()
+		print('waiting for fceux to start...')
+		time.sleep(2)
+		self.bot_status()
 
 
-	def update_board(self):
-		'''updates self._board based on the game screen'''
-		if self.get_game_status() == 2:
+	def start_fceux(self):
+		'''Starts fceux with the lua script'''
+		script_path = os.path.join('tetris_AI.lua')
+		save_path = 'save_states/level_0.fcs'
 
-			self.convert_image()
-			self._board = []
-			converted_image = cv2.imread('game_state/converted_image.png')
-			
-			for row in range(22):
-				for col in range(10):
-					if col%10 == 0:
-						self._board.append([])
-					if converted_image[row][col][0] == 0:
-						self._board[row].append('.')
-					else:
-						self._board[row].append('#')
-			return True
+		start_cmd = 'fceux -lua ' + script_path + ' -loadstate ' + save_path + ' game_roms/Tetris.nes'
+		subprocess.run(start_cmd, shell = True)
 
 
-	def convert_image(self):
-	    '''converts fceux screenshot to a black and white grid'''
-	    try:
-	        status_image = cv2.imread("game_state/status.png")
-	        cropped_image = status_image[40:200, 95:175]
-	        colored_image = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
-	        final_image = cv2.resize(colored_image, (10, 22))
+	def bot_status(self):
+		''' shows general information'''
+		print('|--------------------|')
+		print('GENERATION: ', GENERATION_COUNT)
+		print(self.get_lua_weights())
 
-	        cv2.imwrite('game_state/converted_image.png', final_image)
-	    except TypeError:
-	        # TypeError is raised when status.png has not been created
-	        pass
-
-
-	def get_board_data(self, board):
-		'''prints height, lines_cleared, holes, and bumpiness'''
-		aggregate_height = board_helper.get_height(board)
-		lines_cleared = board_helper.get_lines_cleared(board)
-		total_holes = board_helper.get_holes(board)
-		bumpiness = board_helper.get_bumps(board)
+		aggregate_height = board_helper.get_height(self.live_board)
+		lines_cleared = board_helper.get_lines_cleared(self.live_board)
+		total_holes = board_helper.get_holes(self.live_board)
+		bumpiness = board_helper.get_bumps(self.live_board)
 		
 		print('aggregate_height: ', aggregate_height)
 		print('lines_cleared: ', lines_cleared)
 		print('total_holes: ', total_holes)
 		print('bumpiness: ', bumpiness)
+		print('|--------------------|')
+
+
+	def get_lua_weights(self):
+		'''returns weights generated from lua_file'''
+		height_w, line_w, hole_w, bump_w = open('py_helpers/game_state/lua_weights.txt').read()[1:].split(' ')
+		return height_w, line_w, hole_w, bump_w
 
 
 	def get_game_status(self):
@@ -92,12 +96,12 @@ class Heuristics:
 		        highest_score = score['score']
 		        highest_score_index = score_index
 
-		# best_board = self._hypo_scores[highest_score_index]['board']
-		# print('score:', self._hypo_scores[highest_score_index]['score'])
-		# print('x-value:', self._hypo_scores[highest_score_index]['x_value'])
-		# print('rotations:', self._hypo_scores[highest_score_index]['rotations'])
-		# for r in best_board:
-		#     print(r)
+		best_board = self._hypo_scores[highest_score_index]['board']
+		print('score:', self._hypo_scores[highest_score_index]['score'])
+		print('x-value:', self._hypo_scores[highest_score_index]['x_value'])
+		print('rotations:', self._hypo_scores[highest_score_index]['rotations'])
+		for r in best_board:
+		    print(r)
 		self.get_board_data(self._board)
 
 
@@ -132,7 +136,7 @@ class Heuristics:
 				    break
 
 		# get weights generated from lua_file
-		height_w, line_w, hole_w, bump_w = open('py_helpers/game_state/lua_weights.txt').read().split(' ')
+		height_w, line_w, hole_w, bump_w = self.get_lua_weights()
 
 		# get values determined by move made
 		height_v = int(board_helper.get_height(self._hypo_board))

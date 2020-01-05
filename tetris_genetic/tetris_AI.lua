@@ -1,5 +1,6 @@
 require 'tetris_controls'
 
+POPULATION = {}
 
 -- creates environment
 function init_env()
@@ -19,9 +20,8 @@ end
 
 
 function new_population()
-  local population = {}
   for i = 1, 16 do
-    population[i] = new_chromosome()
+    POPULATION[i] = new_chromosome()
   end
 end
 
@@ -53,18 +53,37 @@ end
 
 
 function get_decision()
-
-
+ -- body
 end
 
 
+function load_current_weights(chromosome_weights)
+  local current_weight_file = io.open('py_helpers/game_state/lua_weights.txt', 'w')
+
+  io.output(current_weight_file)
+  
+  -- write the weights one by one (no table serialization)
+  local weights_string = ''
+  for i = 1, 4 do
+    weights_string = weights_string .. ' ' .. chromosome_weights[i]
+  end
+
+  io.write(weights_string)
+  io.close(current_weight_file)
+
+end
+
 function main()
+  -- start the game
   press_start()
   tetris_sleep()
-  while true do
-    update_info()
-    get_decision()
-    emu.frameadvance()
+
+  -- create the population and load first chromosome
+  new_population()
+  for i = 1, 16 do
+    local chromosome_weights = POPULATION[i]
+    load_current_weights(chromosome_weights)
+    play_game()
   end
 end
 
