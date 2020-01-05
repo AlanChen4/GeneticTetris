@@ -11,6 +11,7 @@ from py_helpers import pieces
 from py_helpers import board_helper
 
 GENERATION_COUNT = 0
+INDIVIDUAL_COUNT = 1
 
 class Heuristics:
 	''' Gathers the information needed for the lua-based AI'''
@@ -29,9 +30,24 @@ class Heuristics:
 
 		# show basic data after starting fceux thread
 		threading.Thread(target=self.start_fceux).start()
-		print('waiting for fceux to start...')
+		print('Waiting for fceux to start...')
 		time.sleep(2)
 		self.bot_status()
+
+		self.start_AI()
+
+
+	def start_AI(self):
+		is_playing = True
+		print('Currently playing the game')
+		while is_playing:
+			game_status = self.get_game_status()
+			if game_status == 10:
+				is_playing = False
+				print('Game is not in playable state')
+				break
+			else:
+				is_playing = True
 
 
 	def start_fceux(self):
@@ -46,7 +62,9 @@ class Heuristics:
 	def bot_status(self):
 		''' shows general information'''
 		print('|--------------------|')
-		print('GENERATION: ', GENERATION_COUNT)
+
+		# TODO: fix generation and individual count later
+		print('GENERATION: ', GENERATION_COUNT, 'INDIVIDUAL: ', INDIVIDUAL_COUNT)
 		print(self.get_lua_weights())
 
 		aggregate_height = board_helper.get_height(self.live_board)

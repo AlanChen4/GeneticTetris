@@ -70,8 +70,23 @@ function load_current_weights(chromosome_weights)
 
   io.write(weights_string)
   io.close(current_weight_file)
-
 end
+
+function play_game()
+  -- play until game is lost
+  local game_lost = false
+  while not game_lost do
+    -- if player has lost
+    if memory.readbyte(0x0048) == 10 then
+      update_info()
+      print('Game Lost. Moving on to next individual')
+      break
+    end
+    update_info()
+    emu.frameadvance()
+  end
+end
+
 
 function main()
   -- start the game
