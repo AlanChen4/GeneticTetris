@@ -2,7 +2,7 @@ import os
 import subprocess
 import threading
 
-from py_helpers.helper import Heuristics
+from py_helpers.main_helper import Heuristics
 
 class tetris_AI:
 

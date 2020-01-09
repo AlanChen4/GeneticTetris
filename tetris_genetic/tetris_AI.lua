@@ -80,9 +80,14 @@ function play_game()
     if memory.readbyte(0x0048) == 10 then
       update_info()
       print('Game Lost. Moving on to next individual')
+
+      -- restart game
+      press_start()
+      press_start()
       break
     end
     update_info()
+    check_AI()
     emu.frameadvance()
   end
 end

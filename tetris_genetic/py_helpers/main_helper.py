@@ -9,6 +9,7 @@ from copy import deepcopy
 
 from py_helpers import pieces
 from py_helpers import board_helper
+from py_helpers import env_helper
 
 GENERATION_COUNT = 0
 INDIVIDUAL_COUNT = 1
@@ -48,6 +49,7 @@ class Heuristics:
 				break
 			else:
 				is_playing = True
+				env_helper.send_command('wait')
 
 
 	def start_fceux(self):

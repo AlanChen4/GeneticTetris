@@ -1,5 +1,6 @@
 -- This file contains the helper methods needed to play tetris
 
+require('lua_helper')
 
 -- resets buttons
 function reset_buttons()
@@ -95,4 +96,15 @@ function update_info()
   io.close(piece_file)
 end
 
-
+function check_AI()
+  local py_status = lines_from('game_state/AI_decision.txt')[1]
+  if (py_status == 'wait') then
+    -- pass
+  elseif (py_status == 'restart') then
+    -- TODO: ADD RESTART FROM OTHER LEVELS
+    press_start()
+    press_start()
+  elseif (py_status == 'down') then
+    -- TODO: THIS DOESN'T WORK
+  end 
+end
