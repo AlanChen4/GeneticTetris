@@ -101,10 +101,11 @@ function check_AI()
   if (py_status == 'wait') then
     -- pass
   elseif (py_status == 'restart') then
-    -- TODO: ADD RESTART FROM OTHER LEVELS
-    press_start()
-    press_start()
-  elseif (py_status == 'down') then
+    savestate.load('game_states/level_0.fcs')
+  elseif (py_status == 'right') then
     -- TODO: THIS DOESN'T WORK
+    move_right()
+  elseif (py_status == 'left') then
+    move_left()
   end 
 end

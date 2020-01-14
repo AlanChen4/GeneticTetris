@@ -72,18 +72,18 @@ function load_current_weights(chromosome_weights)
   io.close(current_weight_file)
 end
 
-function play_game()
+function play_game(individual_number)
   -- play until game is lost
+  print('Individual #' .. individual_number)
   local game_lost = false
+
   while not game_lost do
     -- if player has lost
     if memory.readbyte(0x0048) == 10 then
       update_info()
       print('Game Lost. Moving on to next individual')
-
       -- restart game
-      press_start()
-      press_start()
+      savestate.load(ss_start)
       break
     end
     update_info()
@@ -98,12 +98,16 @@ function main()
   press_start()
   tetris_sleep()
 
+  -- creates the starting save state for restarting the game
+  ss_start = savestate.create(1)
+  savestate.save(ss_start)
+
   -- create the population and load first chromosome
   new_population()
   for i = 1, 16 do
     local chromosome_weights = POPULATION[i]
     load_current_weights(chromosome_weights)
-    play_game()
+    play_game(i)
   end
 end
 

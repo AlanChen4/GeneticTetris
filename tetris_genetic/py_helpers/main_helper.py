@@ -11,8 +11,6 @@ from py_helpers import pieces
 from py_helpers import board_helper
 from py_helpers import env_helper
 
-GENERATION_COUNT = 0
-INDIVIDUAL_COUNT = 1
 
 class Heuristics:
 	''' Gathers the information needed for the lua-based AI'''
@@ -20,6 +18,10 @@ class Heuristics:
 	# TODO: looks like pieces are never placed in the first or last spots
 
 	def __init__(self):
+		# genetic information
+		self.gen_count = 0
+		self.individual_count = 1
+
 		# creates live version of fceux screen
 		self.live_board = []
 		for row in range(22):
@@ -39,17 +41,32 @@ class Heuristics:
 
 
 	def start_AI(self):
+		print('Started AI')
+
 		is_playing = True
-		print('Currently playing the game')
+		skip_restart = False
+		
 		while is_playing:
 			game_status = self.get_game_status()
-			if game_status == 10:
-				is_playing = False
-				print('Game is not in playable state')
-				break
-			else:
+			if game_status != 10:
 				is_playing = True
+				skip_restart = False
+
+				print('Getting decision')
 				env_helper.send_command('wait')
+
+				self.new_get_decision()
+
+			# game is not in a playable state
+			elif game_status == 10 and not skip_restart:
+				print('Restarting game')
+
+				# TODO: possibly remove sleep statement
+				time.sleep(1)
+
+				self.individual_count += 1
+				skip_restart = True
+				self.bot_status()
 
 
 	def start_fceux(self):
@@ -66,7 +83,7 @@ class Heuristics:
 		print('|--------------------|')
 
 		# TODO: fix generation and individual count later
-		print('GENERATION: ', GENERATION_COUNT, 'INDIVIDUAL: ', INDIVIDUAL_COUNT)
+		print('GENERATION:', self.gen_count, 'INDIVIDUAL: ', self.individual_count)
 		print(self.get_lua_weights())
 
 		aggregate_height = board_helper.get_height(self.live_board)
@@ -94,6 +111,18 @@ class Heuristics:
 		except ValueError:
 			game_status = 0
 		return game_status
+
+
+	def self.new_get_decision(self):
+		'''makes every possible hypothetical move, return best option'''
+
+		# list of hypothetical scores after each decision is made
+		self._hypo_scores = []
+
+		
+
+		# writes the commands for fceux interpreter
+		env_helper.send_command('')
 
 
 	def get_decision(self):
