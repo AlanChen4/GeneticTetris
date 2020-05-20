@@ -45,7 +45,7 @@ class Heuristics:
 
 		is_playing = True
 		skip_restart = False
-		
+
 		while is_playing:
 			game_status = self.get_game_status()
 			if game_status != 10:
@@ -113,16 +113,37 @@ class Heuristics:
 		return game_status
 
 
-	def self.new_get_decision(self):
+	def new_get_decision(self):
 		'''makes every possible hypothetical move, return best option'''
 
 		# list of hypothetical scores after each decision is made
 		self._hypo_scores = []
+		piece = pieces.get_piece(console=False)
 
-		
+		# try to place piece in each arrangement possible
+		for rotation_trial in range(4):
+			rotated_piece = pieces.rotate_piece(piece, rotation_trial)
+			for x_trial in range(11 - len(rotated_piece[0])):
+				self.place_piece(x_trial, rotated_piece, rotation_trial)
+
+		# sort through list of scores and find "best" move
+		highest_score = -100000
+		best_move_index = None
+		for score_index, score in enumerate(self._hypo_scores):
+		    if score['score'] > highest_score:
+		        highest_score = score['score']
+		        best_move_index = score_index
+		        
+		# show information about "best" board
+		best_board = self._hypo_scores[best_move_index]['board']
+		print('score:', self._hypo_scores[best_move_index]['score'])
+		print('x-value:', self._hypo_scores[best_move_index]['x_value'])
+		print('rotations:', self._hypo_scores[best_move_index]['rotations'])
+		for row in best_board:
+			print(row)
 
 		# writes the commands for fceux interpreter
-		env_helper.send_command('')
+		# env_helper.send_command('')
 
 
 	def get_decision(self):
@@ -151,12 +172,11 @@ class Heuristics:
 		print('rotations:', self._hypo_scores[highest_score_index]['rotations'])
 		for r in best_board:
 		    print(r)
-		self.get_board_data(self._board)
 
 
 	def place_piece(self, x, piece, rotate_times):
 		'''places piece in x value with given rotations'''
-		self._hypo_board = deepcopy(self._board)
+		self._hypo_board = deepcopy(self.live_board)
 		piece_length = len(piece[0])
 
 		for row_index in range(22):
