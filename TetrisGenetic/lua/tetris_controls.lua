@@ -1,7 +1,5 @@
 -- This file contains the helper methods needed to play tetris
 
-require('lua_helper')
-
 -- resets buttons
 function reset_buttons()
   local buttons = {A=false, up=false, left=false, B=false, select=false, right=false, down=false, start=false}
@@ -72,40 +70,3 @@ function tetris_sleep()
   emu.frameadvance()
 end
 
-
--- updates all information for the python counterparts
-function update_info()
-  gui.savescreenshotas('game_state/status.png')
-
-  -- current status of the game
-  local status_number = memory.readbyte(0x0048)
-  local status_file = io.open('game_state/fceux_status.txt', 'w')
-  
-  io.output(status_file)
-  io.write(status_number)
-  io.close(status_file)
-
-  -- current and next piece loaded
-  local current_piece = memory.readbyte(0x0042)
-  local next_piece = memory.readbyte(0x00BF)
-
-  local piece_file = io.open('py_helpers/game_state/current_next_piece.txt', 'w')
-
-  io.output(piece_file)
-  io.write(current_piece .. ' ' .. next_piece)
-  io.close(piece_file)
-end
-
-function check_AI()
-  local py_status = lines_from('game_state/AI_decision.txt')[1]
-  if (py_status == 'wait') then
-    -- pass
-  elseif (py_status == 'restart') then
-    savestate.load('game_states/level_0.fcs')
-  elseif (py_status == 'right') then
-    -- TODO: THIS DOESN'T WORK
-    move_right()
-  elseif (py_status == 'left') then
-    move_left()
-  end 
-end
