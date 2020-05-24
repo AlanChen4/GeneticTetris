@@ -3,7 +3,7 @@ import subprocess
 
 def start_fceux():
         '''Starts fceux with the lua script'''
-        script_path = os.path.join('tetris-AI.lua')
+        script_path = os.path.join('main.lua')
         save_path = 'save_states/level_0.fcs'
 
         start_cmd = 'fceux -lua ' + script_path + ' -loadstate ' + save_path + ' game_roms/Tetris.nes'
