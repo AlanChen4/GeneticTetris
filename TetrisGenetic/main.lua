@@ -1,11 +1,8 @@
 package.path = package.path .. ";../?.lua"
-require 'lua.lua_helper'
+require 'lua.tetris_GA'
 
 package.path = package.path .. ";../?.lua"
 require 'lua.tetris_helper'
-
-package.path = package.path .. ";../?.lua"
-require 'lua.tetris_GA'
 
 
 function main()
