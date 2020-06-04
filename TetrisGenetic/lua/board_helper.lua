@@ -1,9 +1,9 @@
 -- reads information on the tetris board
 
-board_start = 0x0400
-board_end = 0x04C7
-row_count = 20
-col_count = 10
+BOARD_START = 0x0400
+BOARD_END = 0x04C7
+ROW_COUNT = 20
+COL_COUNT = 10
 
 
 function init_board()
@@ -20,18 +20,18 @@ end
 -- TODO: finish this function
 function get_field()
     local field = {{}}
-    local current_field_addr = board_start
+    local current_field_addr = BOARD_START
 
-    for row = 1, row_count do
+    for row = 1, ROW_COUNT do
         field[row] = {}
-        for col = 1, col_count do
+        for col = 1, COL_COUNT do
             local spot = memory.readbyte(current_field_addr)
             -- 239 means empty cell
             field[row][col] = (cell == 239) and 0 or 1
             current_field_addr = current_field_addr + 1
         end
     end
-    current_field_addr = board_start
+    current_field_addr = BOARD_START
 end
 
 
@@ -44,14 +44,29 @@ end
 
 
 function get_aggregate_height(col_heights)
+    local aggregate_height = 0
+    for i = 1, COL_COUNT do
+        aggregate_height = aggregate_height + col_heights[i]
 end
 
 
 function get_bumpiness(col_heights)
+    local bump = 0
+    for i = 1, COL_COUNT - 1 do
+        bump = bump + math.abs(col_heights[i] - col_height[i+1])
+    end
+    return bump
 end
 
 
 function get_complete_lines(board)
+    local comp_lines = 0
+    for row = 1, ROW_COUNT do
+        for col = 1, COL_COUNT do
+            local cell = field[row][col]
+            if (cell == 0) then
+                break
+            end
 end
 
 
