@@ -25,21 +25,47 @@ function get_field()
     for row = 1, ROW_COUNT do
         field[row] = {}
         for col = 1, COL_COUNT do
-            local spot = memory.readbyte(current_field_addr)
+            local cell = memory.readbyte(current_field_addr)
             -- 239 means empty cell
             field[row][col] = (cell == 239) and 0 or 1
             current_field_addr = current_field_addr + 1
         end
     end
     current_field_addr = BOARD_START
+    return field
 end
 
 
-function get_holes(board)
-end
+function get_holes_and_col_heights(board)
+    local holes = 0
+    local col_heights = {}
 
+    -- initialize the col_heights array
+    for i = 1, COL_COUNT do 
+        col_heights[i] = 0
+    end
 
-function get col_height(board)
+    -- go through each cell, checking for hole/height
+    for row = 1, ROW_COUNT do
+        for col = 1, COL_COUNT do
+            local cell = field[row][col]
+
+            -- empty cell: check for hole
+            if (cell == 0) then
+                if (row > 1) and (col_heights[col] > 0) then
+                    holes = holes + 1
+                end
+
+            -- not empty: get col height 
+            else
+                if (col_heights[col] == 0 and row > 1) then
+                    col_heights[col] = 21 - row
+                end
+            end
+        end
+    end
+    
+    return {holes, col_heights}
 end
 
 
@@ -47,6 +73,7 @@ function get_aggregate_height(col_heights)
     local aggregate_height = 0
     for i = 1, COL_COUNT do
         aggregate_height = aggregate_height + col_heights[i]
+    end
 end
 
 
@@ -67,6 +94,8 @@ function get_complete_lines(board)
             if (cell == 0) then
                 break
             end
+        end
+    end
 end
 
 
