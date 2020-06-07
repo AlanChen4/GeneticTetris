@@ -99,11 +99,21 @@ function get_complete_lines(board)
 end
 
 
-function get_hueristics(playfield)
+function get_hueristics(board)
+    board.holes, board.col_heights = unpack(get_holes_and_col_heights(board.field))
+    board.complete_lines = get_complete_lines(board.field)
+    board.aggregate_height = get_aggregate_height(board.col_heights)
+    board.bumpiness = get_bumpiness(board.col_heights)
+
+    return board
 end
 
 
-function get_reward(playfield, a, b, c, d)
+function get_reward(board, a, b, c, d)
     -- get reward based get_hueristics
+    return (a * board.aggregate_height) +
+           (b * board.complete_lines) +
+           (c * board.holes) +
+           (d * board.bumpiness)
 end
 
