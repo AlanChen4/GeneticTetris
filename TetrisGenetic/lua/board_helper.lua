@@ -17,7 +17,7 @@ function init_board()
     }
 end
 
--- TODO: finish this function
+
 function get_field()
     local field = {{}}
     local current_field_addr = BOARD_START
