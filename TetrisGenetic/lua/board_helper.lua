@@ -36,6 +36,19 @@ function get_field()
 end
 
 
+function fields_equal(one, two)
+    -- returns true if field one is equal to field two
+    for i = 1, ROW_COUNT do
+        for j = 1, COL_COUNT do
+            if (one[i][j] ~= two[i][j]) then
+                return false
+            end
+        end
+    end
+    return true
+end
+
+
 function get_holes_and_col_heights(board)
     local holes = 0
     local col_heights = {}
@@ -117,3 +130,30 @@ function get_reward(board, a, b, c, d)
            (d * board.bumpiness)
 end
 
+
+-- debugging functions below --
+
+function print_field(field)
+    print('printing field')
+    for row = 1, ROW_COUNT do
+        print(field[row])
+    end
+end
+
+
+function print_heuristics(playfield)
+  print("\nCol Heights")
+  print(playfield.col_heights)
+
+  print("\nHoles")
+  print(playfield.holes)
+
+  print("\nAggregate Height")
+  print(playfield.aggregate_height)
+
+  print("\nBumpiness")
+  print(playfield.bumpiness)
+
+  print("\nComplete Lines")
+  print(playfield.complete_lines)
+end
