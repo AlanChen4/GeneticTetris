@@ -10,7 +10,6 @@ function main()
     press_start()
     tetris_sleep()
 
-
     local selection_rate = 0.5
     local mutation_rate = 0.02
 

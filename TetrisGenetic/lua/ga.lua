@@ -1,3 +1,6 @@
+package.path = package.path .. ";../?.lua"
+require('lua.tetris_helper')
+
 -- generates initial population
 function init_population(size, move_limit)
     population = {}
@@ -17,6 +20,11 @@ function get_population_fitness(population, move_limit, generation)
        end
    end
    return temp_population
+end
+
+
+function play_game(chromosome, move_limit)
+    return fitness
 end
 
 
