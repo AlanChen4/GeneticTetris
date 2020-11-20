@@ -1,13 +1,15 @@
 package.path = package.path .. ";../?.lua"
-require 'lua.tetris_GA'
+require 'lua.ga'
 
 package.path = package.path .. ";../?.lua"
 require 'lua.tetris_helper'
 
 
 function main()
-    -- starts level
+    -- sleep after start is pressed to wait for everything to load
     press_start()
+    tetris_sleep()
+
 
     local selection_rate = 0.5
     local mutation_rate = 0.02

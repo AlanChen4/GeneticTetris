@@ -1,13 +1,13 @@
 -- This file contains the helper methods needed to play tetris
 
--- resets buttons
+
 function reset_buttons()
   local buttons = {A=false, up=false, left=false, B=false, select=false, right=false, down=false, start=false}
   joypad.set(1, buttons)
   emu.frameadvance()
 end
 
--- moves the piece right
+
 function move_right()
   local buttons = joypad.get(1)
   buttons['right'] = true
@@ -16,7 +16,7 @@ function move_right()
   reset_buttons()
 end
 
--- moves the piece left
+
 function move_left()
   local buttons = joypad.get(1)
   buttons['left'] = true
@@ -25,7 +25,7 @@ function move_left()
   reset_buttons()
 end
 
--- moves the piece down
+
 function move_down()
   local buttons = joypad.get(1)
   buttons['down'] = true
@@ -34,7 +34,7 @@ function move_down()
   reset_buttons()
 end
 
--- moves the piece up
+
 function move_up()
   local buttons = joypad.get(1)
   buttons['up'] = true
@@ -43,7 +43,7 @@ function move_up()
   reset_buttons()
 end
 
--- press enter button
+
 function press_start()
   local buttons = joypad.get(1)
   buttons['start'] = true
@@ -52,7 +52,7 @@ function press_start()
   reset_buttons()
 end
 
--- rotate piece
+
 function rotate()
   local buttons = joypad.get(1)
   buttons['A'] = true
@@ -69,4 +69,3 @@ function tetris_sleep()
   emu.frameadvance()
   emu.frameadvance()
 end
-

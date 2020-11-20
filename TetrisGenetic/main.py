@@ -3,8 +3,7 @@ import os
 import subprocess
 
 
-def start_fceux(lua_test):
-    '''Starts fceux with the appropriate lua script'''
+def start_fceux(lua_test=False):
     if lua_test:
         script_path = os.path.join('test.lua')
     else:
@@ -17,14 +16,10 @@ def start_fceux(lua_test):
 
 
 if __name__ == '__main__':
-    # program description
     description = "This is a genetic algorithm for Tetris 1989 NES"
 
-    # initiate parser
-    parser = argparse.ArgumentParser(description = description)
-
-    # add arguments to parser
-    parser.add_argument('--tl', '-test_lua', help = 'runs test.lua')
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('--tl', '-test_lua', help='runs test.lua')
 
     args = parser.parse_args()
 
@@ -34,4 +29,3 @@ if __name__ == '__main__':
         test = False
 
     start_fceux(test)
-
