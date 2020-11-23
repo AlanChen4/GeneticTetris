@@ -1,11 +1,21 @@
 package.path = package.path .. ";../?.lua"
 require('lua.tetris_helper')
 
+require('math')
+require('table')
+
 -- generates initial population
 function init_population(size, move_limit)
     population = {}
     for i = 1, size do
         -- TODO: generate genes and create chromosome
+        local individual = {
+            math.random()*randomNegative(),
+            math.random()*randomNegative(),
+            math.random()*randomNegative(),
+            math.random()*randomNegative()
+        }
+        print(individual)
     end
     return population
 end
@@ -43,4 +53,14 @@ function deepcopy(data)
         copy = data
     end
     return copy
+end
+
+
+-- returns 50/50 chance of negative multiplier
+function randomNegative()
+    local num = math.random()
+    if num > 0.5 then
+        return 1
+    end
+    return -1
 end
