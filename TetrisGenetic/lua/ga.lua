@@ -1,5 +1,5 @@
 package.path = package.path .. ";../?.lua"
-require('lua.tetris_helper')
+require('lua.game_helper')
 
 require('math')
 require('table')
@@ -15,8 +15,8 @@ function init_population(size, move_limit)
             math.random()*randomNegative(),
             math.random()*randomNegative()
         }
-        print(individual)
     end
+    print('Generated initial population')
     return population
 end
 
@@ -34,7 +34,10 @@ end
 
 
 function play_game(chromosome, move_limit)
-    return fitness
+    for i = 1, #move_limit do
+
+    end
+    return get_score()
 end
 
 

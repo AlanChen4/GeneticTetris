@@ -2,7 +2,7 @@ package.path = package.path .. ";../?.lua"
 require 'lua.ga'
 
 package.path = package.path .. ";../?.lua"
-require 'lua.tetris_helper'
+require 'lua.game_helper'
 
 
 function main()
@@ -20,10 +20,11 @@ function main()
     local population_size = 50
     local children_size = math.floor(population_size * .5)
 
-    -- TODO: generate initial population
+    -- generate initial population
     local population = init_population(population_size, move_limit)
 
     -- TODO: compute fitness of initial population
+    get_population_fitness(population, move_limit, generation)
  
     -- TODO: move onto generation 1 and continue until limit
     while (generation <= generation_limit) do
