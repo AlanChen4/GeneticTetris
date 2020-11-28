@@ -1,5 +1,6 @@
 package.path = package.path .. ";../?.lua"
 require('lua.game_helper')
+require('lua.piece_helper')
 
 require('math')
 require('table')
@@ -15,6 +16,7 @@ function init_population(size, move_limit)
             math.random()*randomNegative(),
             math.random()*randomNegative()
         }
+        table.insert(population, individual)
     end
     print('Generated initial population')
     return population
@@ -34,26 +36,25 @@ end
 
 
 function play_game(chromosome, move_limit)
-    for i = 1, #move_limit do
+    for i = 1, move_limit do
 
     end
     return get_score()
 end
 
 
--- creates deep copy of table, or other data type
-function deepcopy(data)
-    local data_type = type(data)
+-- creates deep copy of data input
+function deepcopy(orig)
+    local orig_type = type(orig)
     local copy
-    if data_type == 'table' then
+    if orig_type == 'table' then
         copy = {}
-
-        -- "pairs" function (used to iterate through Lua table)
-        for key, value in next, data, nil do
-            copy[deepcopy(key)] = deepcopy(data)
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
         end
-    else
-        copy = data
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
     end
     return copy
 end
