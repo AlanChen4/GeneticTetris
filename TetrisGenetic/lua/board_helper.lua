@@ -8,12 +8,12 @@ COL_COUNT = 10
 
 function init_board()
     return {
-        field = {{}},
-        col_height = {},
-        aggregate_height = 0,
-        complete_lines = 0,
-        holes = 0,
-        bumpiness = 0
+        ['field'] = {{}},
+        ['col_height'] = {},
+        ['aggregate_height'] = 0,
+        ['complete_lines'] = 0,
+        ['holes'] = 0,
+        ['bumpiness'] = 0
     }
 end
 
@@ -49,7 +49,7 @@ function fields_equal(one, two)
 end
 
 
-function get_holes_and_col_heights(board)
+function get_holes_and_col_heights(field)
     local holes = 0
     local col_heights = {}
 
@@ -87,19 +87,20 @@ function get_aggregate_height(col_heights)
     for i = 1, COL_COUNT do
         aggregate_height = aggregate_height + col_heights[i]
     end
+    return aggregate_height
 end
 
 
 function get_bumpiness(col_heights)
     local bump = 0
     for i = 1, COL_COUNT - 1 do
-        bump = bump + math.abs(col_heights[i] - col_height[i+1])
+        bump = bump + math.abs(col_heights[i] - col_heights[i+1])
     end
     return bump
 end
 
 
-function get_complete_lines(board)
+function get_complete_lines(field)
     local comp_lines = 0
     for row = 1, ROW_COUNT do
         for col = 1, COL_COUNT do
@@ -109,6 +110,7 @@ function get_complete_lines(board)
             end
         end
     end
+    return comp_lines
 end
 
 
