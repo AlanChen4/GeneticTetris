@@ -1,5 +1,7 @@
 -- tables that have individual piece info
 
+piece_addr = 0x0062
+
 -- Memory address values of pieces:
   -- 00 - T Up
   -- 01 - T Right
@@ -127,3 +129,56 @@ start_columns = {
   [17] = 6,  -- I
   [18] = 4   -- I Rotated
 }
+
+
+piece_index = {
+    [0] = 'T',   
+    [1] = 'T',   
+    [2] = 'T',   
+    [3] = 'T',   
+    [4] = 'J',   
+    [5] = 'J',   
+    [6] = 'J',   
+    [7] = 'J',   
+    [8] = 'Z',   
+    [9] = 'Z',   
+    [10] = 'O',  
+    [11] = 'S',  
+    [12] = 'S',  
+    [13] = 'L',  
+    [14] = 'L',  
+    [15] = 'L',  
+    [16] = 'L',  
+    [17] = 'I',  
+    [18] = 'I'  
+}
+
+
+piece_heights = {
+    [0] = 3,   
+    [1] = 3,   
+    [2] = 3,   
+    [3] = 3,   
+    [4] = 3,   
+    [5] = 3,   
+    [6] = 3,   
+    [7] = 3,   
+    [8] = 3,   
+    [9] = 3,   
+    [10] = 2,  
+    [11] = 3,  
+    [12] = 3,  
+    [13] = 3,  
+    [14] = 3,  
+    [15] = 3,  
+    [16] = 3,  
+    [17] = 4,  
+    [18] = 4  
+
+}
+
+
+function get_curr_piece()
+    local piece = piece_index[tonumber(memory.readbyte(piece_addr))]
+    return piece
+end
