@@ -108,6 +108,9 @@ function get_complete_lines(field)
             if (cell == 0) then
                 break
             end
+            if (cell == 1 and col == num_cols) then
+                comp_lines = comp_lines + 1
+            end
         end
     end
     return comp_lines
