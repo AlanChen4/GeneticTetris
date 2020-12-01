@@ -38,6 +38,7 @@ function get_population_fitness(population, move_limit, generation)
         -- get fitness
         if (not temp_population[i].fitness) then
            temp_population[i].fitness = play_game(temp_population[i], move_limit)
+           print('Individual #' .. i .. " Fitness: " .. temp_population[i].fitness)
        end
    end
    return temp_population
@@ -45,6 +46,10 @@ end
 
 
 function play_game(chromosome, move_limit)
+    is_game_over = false 
+    pre_state = savestate.create(2)
+    savestate.save(pre_state)
+
     for i = 1, move_limit do
         local best_action_score = -1000000
         local best_action = {
@@ -58,6 +63,13 @@ function play_game(chromosome, move_limit)
         local curr_piece = get_curr_piece()
         local turns = turns_needed(curr_piece)
         local right_moves, left_moves = moves_needed(curr_piece) 
+
+        -- start over from beginning and move to next individual
+        if is_game_over then
+            fitness = get_score()
+            savestate.load(pre_state)
+            return fitness
+        end
 
         -- left
         for move_count = left_moves, 1, -1 do
@@ -143,9 +155,23 @@ function play_game(chromosome, move_limit)
             move_right()
         end
         drop_down()
-
     end
-    return get_score()
+
+    -- return score of the game as fitness score once move limit is reached
+    local fitness = get_score()
+    savestate.load(pre_state)
+    return fitness
+end
+
+
+-- assume game is over when spot in top row is filled
+function game_over()
+    local check = memory.readbyte(0x0400)
+    if check ~= 239 then
+        is_game_over = true
+        return true
+    end
+    return false
 end
 
 
@@ -196,6 +222,9 @@ function drop_down(piece_height)
         end
         move_down()
         y_pos = memory.readbyte(0x0041)
+        if game_over() then
+            break
+        end
     end
 end
 
