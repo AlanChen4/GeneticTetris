@@ -154,30 +154,6 @@ piece_index = {
 }
 
 
-piece_heights = {
-    [0] = 3,   
-    [1] = 3,   
-    [2] = 3,   
-    [3] = 3,   
-    [4] = 3,   
-    [5] = 3,   
-    [6] = 3,   
-    [7] = 3,   
-    [8] = 3,   
-    [9] = 3,   
-    [10] = 2,  
-    [11] = 3,  
-    [12] = 3,  
-    [13] = 3,  
-    [14] = 3,  
-    [15] = 3,  
-    [16] = 3,  
-    [17] = 4,  
-    [18] = 4  
-
-}
-
-
 function get_curr_piece()
     local piece = piece_index[tonumber(memory.readbyte(piece_addr))]
     return piece
