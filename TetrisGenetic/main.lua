@@ -10,39 +10,40 @@ function main()
     press_start()
     tetris_sleep()
 
+    emu.speedmode('maximum')
+
     local selection_rate = 0.5
     local mutation_rate = 0.02
 
-    local generation_limit = 0 
-    local generation = 0
+    local generation_limit = 3 
+    local generation_count = 0
     local move_limit = 250
 
-    local population_size = 50
+    local population_size = 4
     local children_size = math.floor(population_size * .5)
 
     -- generate initial population
     local population = init_population(population_size, move_limit)
 
-    -- TODO: compute fitness of initial population
-    get_population_fitness(population, move_limit, generation)
- 
-    -- TODO: move onto generation 1 and continue until limit
-    while (generation <= generation_limit) do
-        local children = {}
-        for i = 1, children_size do
-            -- TODO: select genomes and sort by fitness
-            -- TODO: crossover and add child to children
-        end
-        
-        -- TODO: replace least fit with new children
-        for i = 1, children_size do
-        end
+    -- move onto generation 1 and continue until limit
+    while (generation_count <= generation_limit) do
+        -- compute fitness of population and add as attribute
+        population = get_population_fitness(population, move_limit, generation_count)
 
-        -- TODO: sort population by fitness
+        -- select parents with better fitness as mating pool
+        local parents = get_mating_pool(population, selection_rate)
+
+        -- crossover
+        local offspring_crossover = crossover(parents, children_size)
+
+        -- mutation
+        local offspring_mutation = mutation(offspring_crossover)
+
+        -- replace population with offspring
+        local population = create_new_population(parents, offspring_mutation)
         
-        print('generation: ' .. generation)
-        print(population[#population])  
-        generation = generation + 1
+        print('[New Generation]: ' .. generation_count)
+        generation_count = generation_count + 1
     end
 
     -- print results of best genome in final population
