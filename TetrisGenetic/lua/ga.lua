@@ -27,7 +27,7 @@ function init_population(size, move_limit)
         }
         table.insert(population, individual)
     end
-    print('Generated initial population')
+    print('[Generated initial population] ' .. size .. ' Individuals')
     return population
 end
 
@@ -38,7 +38,7 @@ function get_population_fitness(population, move_limit, generation)
         -- get fitness
         if (not temp_population[i].fitness) then
            temp_population[i].fitness = play_game(temp_population[i], move_limit)
-           print('Individual #' .. i .. " Fitness: " .. temp_population[i].fitness)
+           print('[Finished] Individual #' .. i .. ' Fitness: ' .. temp_population[i].fitness)
        end
    end
    return temp_population
@@ -74,7 +74,14 @@ function play_game(chromosome, move_limit)
         -- left
         for move_count = left_moves, 1, -1 do
             for turn_count = 1, turns do
+                -- move returns -1 when game is lost
                 local move = do_action('left', turn_count, move_count)
+                if move == -1 then
+                    fitness = get_score()
+                    savestate.load(pre_state)
+                    return fitness
+                end
+
                 local board = init_board()
                 board['field'] = get_field()
                 local hueristics = get_hueristics(board)
@@ -98,7 +105,14 @@ function play_game(chromosome, move_limit)
 
         -- middle
         for turn_count = 0, turns do
+            -- move returns -1 when game is lost
             local move = do_action('middle', turn_count, 0)
+            if move == -1 then
+                fitness = get_score()
+                savestate.load(pre_state)
+                return fitness
+            end
+
             local board = init_board()
             board['field'] = get_field()
             local hueristics = get_hueristics(board)
@@ -122,7 +136,14 @@ function play_game(chromosome, move_limit)
         -- right
         for move_count = 1, right_moves do
             for turn_count = 1, turns do
+                -- move returns -1 when game is lost
                 local move = do_action('right', turn_count, move_count)
+                if move == -1 then
+                    fitness = get_score()
+                    savestate.load(pre_state)
+                    return fitness
+                end
+
                 local board = init_board()
                 board['field'] = get_field()
                 local hueristics = get_hueristics(board)
@@ -154,7 +175,13 @@ function play_game(chromosome, move_limit)
         for i = 1, best_action['right'] do
             move_right()
         end
-        drop_down()
+
+        -- drop_down returns -1 when game is over
+        if drop_down() == -1 then
+            fitness = get_score()
+            savestate.load(pre_state)
+            return fitness
+        end
     end
 
     -- return score of the game as fitness score once move limit is reached
@@ -190,8 +217,10 @@ function do_action(direction, turn_count, move_count)
         end
     end
 
-    local piece_height = piece_heights[tonumber(memory.readbyte(0x0062))]
-    drop_down(piece_height)
+    -- drop down returns -1 when game is over
+    if drop_down() == -1 then
+        return -1
+    end
 
     local left 
     local right
@@ -213,17 +242,18 @@ function do_action(direction, turn_count, move_count)
 end
 
 
-function drop_down(piece_height)
+function drop_down()
     local started = false
     local y_pos = memory.readbyte(0x0041)
+    local piece_height = piece_heights[tonumber(memory.readbyte(0x0062))]
     while (y_pos ~= 0 or not started) do
         if y_pos > 1 then
             started = true
         end
         move_down()
-        y_pos = memory.readbyte(0x0041)
+        y_pos = memory.readbyte(0x0041) - piece_height
         if game_over() then
-            break
+            return -1
         end
     end
 end
