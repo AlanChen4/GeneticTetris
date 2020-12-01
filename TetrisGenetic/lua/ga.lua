@@ -104,7 +104,7 @@ function play_game(chromosome, move_limit)
         end
 
         -- middle
-        for turn_count = 0, turns do
+        for turn_count = 1, turns do
             -- move returns -1 when game is lost
             local move = do_action('middle', turn_count, 0)
             if move == -1 then
@@ -245,13 +245,12 @@ end
 function drop_down()
     local started = false
     local y_pos = memory.readbyte(0x0041)
-    local piece_height = piece_heights[tonumber(memory.readbyte(0x0062))]
     while (y_pos ~= 0 or not started) do
         if y_pos > 1 then
             started = true
         end
         move_down()
-        y_pos = memory.readbyte(0x0041) - piece_height
+        y_pos = memory.readbyte(0x0041)
         if game_over() then
             return -1
         end
