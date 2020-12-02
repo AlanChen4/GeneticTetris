@@ -35,11 +35,12 @@ end
 -- select individuals from old generation for mating, biased in favor of fitter ones
 function get_mating_pool(population, selection_rate)
     local mating_pool = {}
+    local population_copy = deepcopy(population)
 
     -- sort and then select highest fitness individuals to be returned
-    table.sort(population, compare_fitness)
+    table.sort(population_copy, compare_fitness)
     for i = #population, #population*selection_rate+1, -1 do
-        table.insert(mating_pool, population[i])
+        table.insert(mating_pool, population_copy[i])
     end
 
     return mating_pool
@@ -53,17 +54,75 @@ end
 
 
 -- generation next generation using crossover
-function crossover(population, children_size)
+function crossover(parents, children_size)
+    local offspring = {}
+    for i=1, children_size do
+        local new_individual = {
+            parents[i][1],
+            parents[i][2],
+            parents[i % children_size + 1][3],
+            parents[i % children_size + 1][4]
+        }
+        table.insert(offspring, new_individual)
+    end
+    return offspring
 end
 
 
 -- Add variation using mutation
-function mutation(offspring_crossover)
+function mutation(offspring_crossover, mutation_rate)
+    local offspring_copy = deepcopy(offspring_crossover)
+    -- initialize and warm random
+    math.randomseed(os.time())
+    math.random();math.random();math.random();
+
+    for i = 1, #offspring_copy do
+        -- use math.random to decide whether or not to mutate
+        if math.random() < mutation_rate then
+            local random_index = math.random(1,4)
+            offspring_copy[i][random_index] = offspring_copy[i][random_index] + mutation_gene()
+        end
+    end
+
+    return offspring_copy
+end
+
+
+-- helper for mutation function, by returning random number 
+-- to be added as gene
+function mutation_gene()
+    -- initialize and warm random
+    math.randomseed(os.time())
+    math.random();math.random();math.random();
+
+    return math.random() * rand_negative()
+end
+
+
+-- helper method for mutation_gene, returns negative multiplier
+-- on 50/50 chance
+function rand_negative()
+    -- initialize and warm random
+    math.randomseed(os.time())
+    math.random();math.random();math.random();
+
+    if math.random() < 0.5 then
+        return 1
+    end
+    return -1
 end
 
 
 -- Create new population based on parents and offspring
 function create_new_population(parents, offspring_mutation)
+    local new_population = {}
+    for i = 1, #parents do
+        table.insert(new_population, parents[i])
+    end
+    for i = 1, #offspring_mutation do
+        table.insert(new_population, offspring_mutation[i])
+    end
+    return new_population
 end
 
 
@@ -72,8 +131,9 @@ function get_population_fitness(population, move_limit, generation)
     for i = 1, #temp_population do
         -- get fitness
         if (not temp_population[i].fitness) then
-           temp_population[i].fitness = play_game(temp_population[i], move_limit)
-           print('[Finished] Individual #' .. i .. ' Fitness: ' .. temp_population[i].fitness)
+            print('[Started] Finding fitness of individual #' .. i)
+            temp_population[i].fitness = play_game(temp_population[i], move_limit)
+            print('[Finished] Individual #' .. i .. ' Fitness: ' .. temp_population[i].fitness)
        end
    end
    return temp_population
