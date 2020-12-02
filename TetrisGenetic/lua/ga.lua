@@ -32,6 +32,41 @@ function init_population(size, move_limit)
 end
 
 
+-- select individuals from old generation for mating, biased in favor of fitter ones
+function get_mating_pool(population, selection_rate)
+    local mating_pool = {}
+
+    -- sort and then select highest fitness individuals to be returned
+    table.sort(population, compare_fitness)
+    for i = #population, #population*selection_rate+1, -1 do
+        table.insert(mating_pool, population[i])
+    end
+
+    return mating_pool
+end
+
+
+-- used for fitness sorting in get_mating_pool
+function compare_fitness(a, b)
+    return a.fitness < b.fitness
+end
+
+
+-- generation next generation using crossover
+function crossover(population, children_size)
+end
+
+
+-- Add variation using mutation
+function mutation(offspring_crossover)
+end
+
+
+-- Create new population based on parents and offspring
+function create_new_population(parents, offspring_mutation)
+end
+
+
 function get_population_fitness(population, move_limit, generation)
     local temp_population = deepcopy(population)
     for i = 1, #temp_population do
@@ -71,7 +106,7 @@ function play_game(chromosome, move_limit)
             return fitness
         end
 
-        -- left
+        -- all possible permutations on left side of board
         for move_count = left_moves, 1, -1 do
             for turn_count = 1, turns do
                 -- move returns -1 when game is lost
@@ -103,7 +138,7 @@ function play_game(chromosome, move_limit)
             end
         end
 
-        -- middle
+        -- all possible permutations in the middle of board
         for turn_count = 1, turns do
             -- move returns -1 when game is lost
             local move = do_action('middle', turn_count, 0)
@@ -133,7 +168,7 @@ function play_game(chromosome, move_limit)
             savestate.load(og_state)
         end
 
-        -- right
+        -- all possible permutations on right side of board
         for move_count = 1, right_moves do
             for turn_count = 1, turns do
                 -- move returns -1 when game is lost
