@@ -3,9 +3,6 @@ require('lua.board_helper')
 require('lua.game_helper')
 require('lua.piece_helper')
 
-require('math')
-require('table')
-
 -- generates initial population
 function init_population(size, move_limit)
     population = {}

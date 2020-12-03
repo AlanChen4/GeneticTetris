@@ -1,5 +1,3 @@
--- reads information on the tetris board
-
 BOARD_START = 0x0400
 BOARD_END = 0x04C7
 ROW_COUNT = 20

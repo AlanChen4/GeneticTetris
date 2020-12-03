@@ -1,5 +1,3 @@
--- This file contains the helper methods needed to play tetris
-
 function get_score()
     score_right = dec_to_hex(memory.readbyte(0x0073))
     score_mid = dec_to_hex(memory.readbyte(0x0074))

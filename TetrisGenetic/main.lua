@@ -1,7 +1,5 @@
 package.path = package.path .. ";../?.lua"
 require 'lua.ga'
-
-package.path = package.path .. ";../?.lua"
 require 'lua.game_helper'
 
 
