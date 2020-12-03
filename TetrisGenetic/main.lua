@@ -15,8 +15,8 @@ function main()
     local selection_rate = 0.5
     local mutation_rate = 0.02
 
-    local generation_limit = 3 
-    local generation_count = 0
+    local generation_limit = 5 
+    local generation_count = 1
     local move_limit = 250
 
     local population_size = 4
@@ -37,18 +37,18 @@ function main()
         local offspring_crossover = crossover(parents, children_size)
 
         -- mutation
-        local offspring_mutation = mutation(offspring_crossover)
+        local offspring_mutation = mutation(offspring_crossover, mutation_rate)
 
         -- replace population with offspring
-        local population = create_new_population(parents, offspring_mutation)
+        population = create_new_population(parents, offspring_mutation)
         
         print('[New Generation]: ' .. generation_count)
         generation_count = generation_count + 1
     end
 
     -- print results of best genome in final population
-    print('FITTEST GENOME:')
-    print(population[#population])  
+    print('[COMPLETE] Final Generation')
+    print(population)  
 end
 
 main()
