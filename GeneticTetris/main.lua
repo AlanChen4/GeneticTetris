@@ -15,7 +15,7 @@ function main()
 
     local generation_limit = 5 
     local generation_count = 1
-    local move_limit = 250
+    local move_limit = 500
 
     local population_size = 4
     local children_size = math.floor(population_size * .5)
